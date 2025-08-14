@@ -1,0 +1,162 @@
+# Portfolio Forecasting Configuration
+
+# Data Configuration
+data:
+  tickers:
+    - "TSLA"  # Tesla Inc.
+    - "BND"   # Vanguard Total Bond Market ETF
+    - "SPY"   # SPDR S&P 500 ETF Trust
+  
+  date_range:
+    start_date: "2018-01-01"
+    end_date: "2024-01-01"
+  
+  frequency: "1d"  # Daily data
+  
+  # Data paths
+  raw_data_path: "data/raw"
+  processed_data_path: "data/processed"
+
+# Preprocessing Configuration
+preprocessing:
+  # Feature engineering
+  features:
+    - "returns"
+    - "log_returns"
+    - "volatility"
+    - "moving_averages"
+    - "rsi"
+    - "bollinger_bands"
+  
+  # Moving average windows
+  ma_windows: [5, 10, 20, 50]
+  
+  # Volatility window
+  volatility_window: 20
+  
+  # RSI period
+  rsi_period: 14
+  
+  # Bollinger bands parameters
+  bollinger_window: 20
+  bollinger_std: 2
+
+# Model Configuration
+models:
+  # ARIMA/SARIMA parameters
+  arima:
+    max_p: 5
+    max_d: 2
+    max_q: 5
+    seasonal: true
+    max_P: 2
+    max_D: 1
+    max_Q: 2
+    seasonal_period: 252  # Trading days in a year
+    information_criterion: "aic"
+  
+  # LSTM parameters
+  lstm:
+    sequence_length: 60
+    batch_size: 32
+    epochs: 100
+    validation_split: 0.2
+    early_stopping_patience: 10
+    
+    # Architecture
+    layers:
+      - type: "LSTM"
+        units: 50
+        return_sequences: true
+        dropout: 0.2
+      - type: "LSTM"
+        units: 50
+        return_sequences: false
+        dropout: 0.2
+      - type: "Dense"
+        units: 25
+      - type: "Dense"
+        units: 1
+    
+    # Optimizer
+    optimizer: "adam"
+    learning_rate: 0.001
+    loss: "mean_squared_error"
+
+# Forecasting Configuration
+forecasting:
+  # Forecast horizons (in trading days)
+  horizons:
+    short_term: 126   # ~6 months
+    long_term: 252    # ~12 months
+  
+  # Confidence intervals
+  confidence_levels: [0.80, 0.95]
+  
+  # Monte Carlo simulations
+  monte_carlo_runs: 1000
+
+# Portfolio Optimization Configuration
+portfolio:
+  # Risk-free rate (annual)
+  risk_free_rate: 0.02
+  
+  # Optimization constraints
+  constraints:
+    min_weight: 0.0
+    max_weight: 1.0
+    sum_weights: 1.0
+  
+  # Efficient frontier points
+  efficient_frontier_points: 100
+  
+  # Rebalancing frequency
+  rebalancing_frequency: "monthly"
+
+# Backtesting Configuration
+backtesting:
+  # Test period
+  test_start_date: "2022-01-01"
+  test_end_date: "2024-01-01"
+  
+  # Benchmark portfolio (60/40 stocks/bonds)
+  benchmark:
+    stocks_weight: 0.6
+    bonds_weight: 0.4
+    stocks_ticker: "SPY"
+    bonds_ticker: "BND"
+  
+  # Transaction costs
+  transaction_cost: 0.001  # 0.1%
+  
+  # Rebalancing frequency
+  rebalancing_frequency: "monthly"
+  
+  # Performance metrics
+  metrics:
+    - "total_return"
+    - "annualized_return"
+    - "volatility"
+    - "sharpe_ratio"
+    - "max_drawdown"
+    - "calmar_ratio"
+    - "sortino_ratio"
+
+# Reporting Configuration
+reporting:
+  # Output formats
+  formats: ["html", "pdf"]
+  
+  # Figure settings
+  figure_size: [12, 8]
+  figure_dpi: 300
+  
+  # Export paths
+  reports_path: "reports"
+  figures_path: "reports/figures"
+
+# Logging Configuration
+logging:
+  level: "INFO"
+  format: "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+  file: "logs/portfolio_forecasting.log"
